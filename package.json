@@ -1,6 +1,6 @@
 {
   "name": "radix-meme-gateway",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Utility to fetch relevant data for radix.meme app directly from the radix ledger",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
