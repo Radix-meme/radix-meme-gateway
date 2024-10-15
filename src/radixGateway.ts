@@ -110,7 +110,3 @@ export function createRadixGateway(network: Network) {
     getRadixApiValue,
   };
 }
-
-// // Example usage:
-// const radixGateway = createRadixGateway(Network.MAINNET);
-// radixGateway.getTransactionStatus("tx_intent_hash_here").then(console.log);

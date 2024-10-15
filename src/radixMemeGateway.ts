@@ -86,8 +86,9 @@ export function createRadixMemeGateway(network: Network) {
   }
 
   // Function to get all tokens data
-  async function getAllTokensData(kvsAddress: string): Promise<TTokenData[]> {
-    const tokenComponents = await getAllTokensComponents(kvsAddress);
+  async function getAllTokensData(componentAddress: string): Promise<TTokenData[]> {
+    const mainComponentState = await getMainComponentState(componentAddress);
+    const tokenComponents = await getAllTokensComponents(mainComponentState.tokensKvs);
     const result: TTokenData[] = await Promise.all(
       tokenComponents?.map((tokenComponent) => {
         return getTokenData(tokenComponent);
@@ -261,8 +262,3 @@ export function createRadixMemeGateway(network: Network) {
     getTokenData,
   };
 }
-
-// Example usage:
-// const radixMemeGateway = createRadixMemeGateway(Network.STOKENET);
-// await radixMemeGateway.getMainComponentState("component_address");
-// await radixMemeGateway.getAllTokensData("component_address");
