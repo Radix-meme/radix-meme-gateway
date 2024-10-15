@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "build": "tsup",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "repl": "npm run build && clear -x && ( node --experimental-repl-await -i -e \"$(< init-dev-env.js)\" --max-old-space-size=14336)"
   },
   "keywords": [
     "radix"

@@ -3,8 +3,8 @@
 import axios, { AxiosInstance } from "axios";
 
 export enum Network {
-  MAINNET = "mainnet",
-  STOKENET = "stokenet",
+  MAINNET = "MAINNET",
+  STOKENET = "STOKENET",
 }
 
 export interface ApiResult {

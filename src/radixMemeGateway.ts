@@ -29,13 +29,18 @@ export type TTokenData = {
 };
 
 // Factory function to create an API client for a specific Radix network
-export function createRadixMemeGateway(network: Network) {
-  const radixGateway = createRadixGateway(network);
-  
+export function createRadixMemeGateway({
+  network,
+  componentAddress,
+}: {
+  network: Network;
+  componentAddress: string;
+}) {
+  const NETWORK = network;
+  const COMPONENT_ADDRESS = componentAddress;
+  const radixGateway = createRadixGateway(NETWORK);
   // Function to get main component state
-  async function getMainComponentState(
-    componentAddress: string
-  ): Promise<TMainComponentData> {
+  async function getMainComponentState(): Promise<TMainComponentData> {
     const result = {
       address: "",
       ownerBadge: "",
@@ -44,14 +49,17 @@ export function createRadixMemeGateway(network: Network) {
       multiplier: "",
       tokensKvs: "",
     };
-    const apiResult = await radixGateway.getRadixApiValue("state/entity/details", {
-      addresses: [componentAddress],
-      aggregation_level: "Global",
-    });
+    const apiResult = await radixGateway.getRadixApiValue(
+      "state/entity/details",
+      {
+        addresses: [COMPONENT_ADDRESS],
+        aggregation_level: "Global",
+      }
+    );
     if (apiResult.status != 200) {
       console.error(
         "Problem fetching main component details for address: " +
-          componentAddress,
+          COMPONENT_ADDRESS,
         apiResult
       );
       throw new Error(apiResult.message);
@@ -86,23 +94,30 @@ export function createRadixMemeGateway(network: Network) {
   }
 
   // Function to get all tokens data
-  async function getAllTokensData(componentAddress: string): Promise<TTokenData[]> {
-    const mainComponentState = await getMainComponentState(componentAddress);
-    const tokenComponents = await getAllTokensComponents(mainComponentState.tokensKvs);
+  async function getAllTokens(): Promise<TTokenData[]> {
+    const mainComponentState = await getMainComponentState();
+    const tokenComponents = await getAllTokenComponentAddresses(
+      mainComponentState.tokensKvs
+    );
     const result: TTokenData[] = await Promise.all(
       tokenComponents?.map((tokenComponent) => {
-        return getTokenData(tokenComponent);
+        return getToken(tokenComponent);
       })
     );
     return result;
   }
 
   // Function to get all token components
-  async function getAllTokensComponents(kvsAddress: string): Promise<string[]> {
+  async function getAllTokenComponentAddresses(
+    kvsAddress: string
+  ): Promise<string[]> {
     let result: string[] = [];
-    const apiResult = await radixGateway.getRadixApiValue("state/key-value-store/keys", {
-      key_value_store_address: kvsAddress,
-    });
+    const apiResult = await radixGateway.getRadixApiValue(
+      "state/key-value-store/keys",
+      {
+        key_value_store_address: kvsAddress,
+      }
+    );
     if (apiResult.status != 200) {
       console.error(
         "Problem fetching all tokens components from Radix API.",
@@ -120,7 +135,7 @@ export function createRadixMemeGateway(network: Network) {
   }
 
   // Function to get token data
-  async function getTokenData(tokenComponent: string): Promise<TTokenData> {
+  async function getToken(tokenComponent: string): Promise<TTokenData> {
     const result: TTokenData = {
       address: "",
       componentAddress: tokenComponent,
@@ -137,7 +152,6 @@ export function createRadixMemeGateway(network: Network) {
       xrdAmount: 0,
       maxXrdAmount: 0,
     };
-
     // First API call to get component's metadata
     const getComponentApiResult = await radixGateway.getRadixApiValue(
       "state/entity/details",
@@ -146,7 +160,6 @@ export function createRadixMemeGateway(network: Network) {
         aggregation_level: "Global",
       }
     );
-
     if (getComponentApiResult.status != 200) {
       throw new Error(
         `Problem fetching component details for token component: ${tokenComponent}. API Result: ${JSON.stringify(
@@ -157,7 +170,6 @@ export function createRadixMemeGateway(network: Network) {
     if (getComponentApiResult.data.items.length === 0) {
       return result;
     }
-
     // Extract metadata from component
     const componentStateFields =
       getComponentApiResult.data.items[0].details?.state?.fields;
@@ -177,7 +189,6 @@ export function createRadixMemeGateway(network: Network) {
           break;
       }
     }
-
     // Get current XRD amount inside vault
     const componentFungibleResources =
       getComponentApiResult.data.items[0].fungible_resources?.items;
@@ -190,17 +201,14 @@ export function createRadixMemeGateway(network: Network) {
         result.xrdAmount = Number(xrdResource.amount);
       }
     }
-
     // compute progress
     if (result.xrdAmount && result.maxXrdAmount) {
       result.progress = result.xrdAmount / result.maxXrdAmount;
     }
-
     // If no resource address found, do not continue
     if (!result.address) {
       return result;
     }
-
     // Second API call to get metadata of the resource
     const getResourceApiResult = await radixGateway.getRadixApiValue(
       "state/entity/page/metadata",
@@ -208,7 +216,6 @@ export function createRadixMemeGateway(network: Network) {
         address: result.address,
       }
     );
-
     if (getResourceApiResult.status != 200) {
       console.error(
         `Problem fetching metadata for token: ${
@@ -217,11 +224,9 @@ export function createRadixMemeGateway(network: Network) {
       );
       return result;
     }
-
     if (!getResourceApiResult.data.items) {
       return result;
     }
-
     // Extract metadata from resource
     for (const data of getResourceApiResult.data.items) {
       switch (data.key) {
@@ -254,11 +259,19 @@ export function createRadixMemeGateway(network: Network) {
     return result;
   }
 
+  function getConfig() {
+    return {
+      network: NETWORK,
+      componentAddress: COMPONENT_ADDRESS,
+    };
+  }
+
   // Return the API methods
   return {
     getMainComponentState,
-    getAllTokensData,
-    getAllTokensComponents,
-    getTokenData,
+    getAllTokens,
+    getToken,
+    // getTokenTxs, // TODO: implement
+    getConfig,
   };
 }
