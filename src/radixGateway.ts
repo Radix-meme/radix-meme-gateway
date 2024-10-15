@@ -21,8 +21,7 @@ export function createRadixGateway(network: Network) {
         ? "https://mainnet.radixdlt.com"
         : "https://babylon-stokenet-gateway.radixdlt.com",
   });
-  console.log(`Radix network set to '${network}'`);
-
+  
   // Function to get transaction status
   async function getTransactionStatus(
     tx_intent_hash: string
