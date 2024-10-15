@@ -4,13 +4,13 @@ This package provides a utility to fetch data relevant to the [radix.meme](https
 
 ## Usage
 
-### Install
+**Install**
 
 ```bash
 npm install radix-meme-gateway
 ```
 
-### Initialize Service
+**Initialize Service**
 
 ```ts
 import { createRadixGateway, Network, radixMemeAddressbook } from "radix-meme-gateway";
@@ -28,7 +28,7 @@ const radixMemeGateway = createRadixGateway({
 console.log(radixMemeGateway.getConfig());
 ```
 
-### API endpoints
+**API endpoints**
 
 ```ts
 // Fetch all tokens
@@ -41,7 +41,7 @@ const token = await radixMemeGateway.getToken("component_tdx_2_1cqcfndu8u4658fw6
 // PENDING - NOT IMPLEMENTED YET
 ```
 
-## REPL test environment
+## REPL test environment
 
 To test the gateway in a JS REPL, you can simply run:
 
