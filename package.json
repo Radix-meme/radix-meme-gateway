@@ -1,0 +1,25 @@
+{
+  "name": "radix-meme-gateway",
+  "version": "1.0.0",
+  "description": "Utility to fetch relevant data for radix.meme app directly from the radix ledger",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "radix"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3"
+  }
+}
