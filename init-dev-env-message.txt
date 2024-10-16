@@ -15,17 +15,21 @@ BACKEND ENVIRONMENT PLAYGROUND
   radixMemeAddressbook : list/librabry of component addresses
 
 ====Initialized variables
-  rmg   : a RadixMemeGateway instance, connected to latest stokenet app
+  radixMemeGateway     : a RadixMemeGateway instance, connected to latest stokenet app
+  radixGateway         : a RadixGateway instance, connected to stokenet
 
 ====Example usage:
   // get a list of component addresses
   console.log(radixMemeAddressbook);
 
   // get all tokens
-  await rmg.getAllTokens();
+  await radixMemeGateway.getAllTokens();
 
   // get specific token
-  await rmg.getToken("component_asdasd");
+  await radixMemeGateway.getToken("component_asdasd");
+
+  // get latest transactions
+  await radixGateway.getLatestTransactions();
 
 
 

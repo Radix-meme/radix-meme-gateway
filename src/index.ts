@@ -3,7 +3,7 @@ import {
   TMainComponentData,
   TTokenData,
 } from "./radixMemeGateway";
-import { Network } from "./radixGateway";
+import { Network, createRadixGateway } from "./radixGateway";
 
 const radixMemeAddressbook = {
   MAINNET: {
@@ -36,6 +36,7 @@ const radixMemeAddressbook = {
 
 export {
   createRadixMemeGateway,
+  createRadixGateway,
   radixMemeAddressbook,
   Network,
   TMainComponentData,
