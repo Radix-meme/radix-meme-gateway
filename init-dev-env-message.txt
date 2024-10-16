@@ -28,7 +28,10 @@ BACKEND ENVIRONMENT PLAYGROUND
   // get specific token
   await radixMemeGateway.getToken("component_asdasd");
 
-  // get latest transactions
+  // fetch latest 100 transactions, and filter out RadixMeme transactions
+  await radixMemeGateway.getLatestRadixMemeTransactions();
+
+  // get latest 100 transactions from the ledger
   await radixGateway.getLatestTransactions();
 
 
