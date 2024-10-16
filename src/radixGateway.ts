@@ -13,6 +13,11 @@ export interface ApiResult {
   data: any;
 }
 
+export interface Transaction {
+  txId: string;
+  radixMemeTokenTradeEvent: any;
+}
+
 // Factory function to create an API client for a specific Radix network
 export function createRadixGateway(network: Network) {
   const apiServer: AxiosInstance = axios.create({
@@ -21,7 +26,7 @@ export function createRadixGateway(network: Network) {
         ? "https://mainnet.radixdlt.com"
         : "https://babylon-stokenet-gateway.radixdlt.com",
   });
-  
+
   // Function to get transaction status
   async function getTransactionStatus(
     tx_intent_hash: string
@@ -44,6 +49,18 @@ export function createRadixGateway(network: Network) {
         receipt_events: "true",
         affected_global_entities: "true",
       },
+    });
+  }
+
+  // Function to get latest transaction from the ledger
+  async function getLatestTransactions(
+    limitPerPage: number = 100
+  ): Promise<ApiResult> {
+    return await getRadixApiValue("stream/transactions", {
+      opt_ins: {
+        receipt_events: "true",
+      },
+      limit_per_page: limitPerPage,
     });
   }
 
@@ -106,6 +123,7 @@ export function createRadixGateway(network: Network) {
   return {
     getTransactionStatus,
     getTransactionDetail,
+    getLatestTransactions,
     getRadixApiValue,
   };
 }

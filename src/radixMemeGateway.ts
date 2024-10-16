@@ -28,6 +28,16 @@ export type TTokenData = {
   lastPrice?: number;
 };
 
+export interface RadixMemeEvent {
+  txId: string;
+  eventPayload: any;
+}
+
+export interface GetLatestRadixMemeTransactionsResult {
+  lastTxId: string;
+  radixMemeEvents: RadixMemeEvent[];
+}
+
 // Factory function to create an API client for a specific Radix network
 export function createRadixMemeGateway({
   network,
@@ -259,6 +269,36 @@ export function createRadixMemeGateway({
     return result;
   }
 
+  // Function to fetch latest 100 transactions, and extract
+  // a list of txs that contain a RadixMemeTokenTradeEvent
+  async function getLatestRadixMemeTransactions(
+    limitPerPage: number = 100
+  ): Promise<GetLatestRadixMemeTransactionsResult> {
+    const apiResult = await radixGateway.getLatestTransactions(limitPerPage);
+    if (apiResult.status != 200) {
+      console.error("Problem fetching latest transactions: ", apiResult);
+      throw new Error(apiResult.message);
+    }
+    // Init result object
+    const items = apiResult.data.items;
+    const result: GetLatestRadixMemeTransactionsResult = {
+      lastTxId: items[0].intent_hash,
+      radixMemeEvents: [],
+    };
+    items.forEach((tx: any) => {
+      const radixMemeEvent = tx.receipt.events.find(
+        (ev: any) => ev.name === "RadixMemeTokenTradeEvent"
+      );
+      if (radixMemeEvent) {
+        result.radixMemeEvents.push({
+          txId: tx.intent_hash,
+          eventPayload: radixMemeEvent,
+        });
+      }
+    });
+    return result;
+  }
+
   function getConfig() {
     return {
       network: NETWORK,
@@ -271,7 +311,7 @@ export function createRadixMemeGateway({
     getMainComponentState,
     getAllTokens,
     getToken,
-    // getTokenTxs, // TODO: implement
+    getLatestRadixMemeTransactions,
     getConfig,
   };
 }
