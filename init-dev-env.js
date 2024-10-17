@@ -1,10 +1,10 @@
 const axios = require("axios");
 const { createRadixMemeGateway, createRadixGateway, radixMemeAddressbook } = require("./dist/index");
 
-const radixMemeGateway = createRadixMemeGateway({
-  network: "STOKENET",
-  componentAddress: radixMemeAddressbook.STOKENET.latest.componentAddress
-});
+const radixMemeGateway = createRadixMemeGateway(
+  "STOKENET",
+  radixMemeAddressbook.STOKENET.latest.componentAddress
+);
 
 const radixGateway = createRadixGateway("STOKENET");
 

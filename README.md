@@ -13,16 +13,20 @@ npm install radix-meme-gateway
 **Initialize Service**
 
 ```ts
-import { createRadixGateway, Network, radixMemeAddressbook } from "radix-meme-gateway";
+import { 
+  createRadixMemeGateway,
+  Network,
+  radixMemeAddressbook
+} from "radix-meme-gateway";
 
 // show all stored ledger addresses
 console.log(radixMemeAddressbook);
 
 // initialize service
-const radixMemeGateway = createRadixGateway({
-  network: Network.STOKENET,
-  componentAddress: radixMemeAddressbook.STOKENET.latest.componentAddress,
-});
+const radixMemeGateway = createRadixMemeGateway(
+  Network.STOKENET,
+  radixMemeAddressbook.STOKENET.latest.componentAddress
+);
 
 // Show config of an instance
 console.log(radixMemeGateway.getConfig());
@@ -35,10 +39,12 @@ console.log(radixMemeGateway.getConfig());
 const tokens = await radixMemeGateway.getAllTokens();
 
 // Fetch token
-const token = await radixMemeGateway.getToken("component_tdx_2_1cqcfndu8u4658fw68lu272sm0mwf38ms5p9dchpskn9rxwptpu05k4");
+const token = await radixMemeGateway.getToken(
+  "component_tdx_2_1cqcfndu8u4658fw68lu272sm0mwf38ms5p9dchpskn9rxwptpu05k4"
+);
 
-// Fetch transactions of a given token
-// PENDING - NOT IMPLEMENTED YET
+// Fetch the last 100 TXs on the radix ledger and filter out all radixMemeEvents
+const events = await radixMemeGateway.getLatestRadixMemeTransactions();
 ```
 
 ## REPL test environment

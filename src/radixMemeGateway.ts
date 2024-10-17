@@ -39,15 +39,16 @@ export interface GetLatestRadixMemeTransactionsResult {
 }
 
 // Factory function to create an API client for a specific Radix network
-export function createRadixMemeGateway({
-  network,
-  componentAddress,
-}: {
-  network: Network;
-  componentAddress: string;
-}) {
+export function createRadixMemeGateway(
+  network: Network,
+  componentAddress: string
+) {
   const NETWORK = network;
   const COMPONENT_ADDRESS = componentAddress;
+  const XRD_RESOURCE_ADDRESS =
+    network === Network.MAINNET
+      ? "resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd"
+      : "resource_tdx_2_1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxtfd2jc";
   const radixGateway = createRadixGateway(NETWORK);
   // Function to get main component state
   async function getMainComponentState(): Promise<TMainComponentData> {
@@ -205,7 +206,7 @@ export function createRadixMemeGateway({
     if (componentFungibleResources.length > 0) {
       const xrdResource = componentFungibleResources.find(
         (resObj: { resource_address: string | undefined }) =>
-          resObj.resource_address === process.env.NEXT_PUBLIC_XRD_ADDRESS
+          resObj.resource_address === XRD_RESOURCE_ADDRESS
       );
       if (xrdResource && typeof xrdResource.amount === "string") {
         result.xrdAmount = Number(xrdResource.amount);
